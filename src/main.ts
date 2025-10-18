@@ -1,14 +1,15 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
-import 'dotenv/config';
 import { Logger } from '@nestjs/common';
+import { envVars } from './config/envs.validator';
+
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(process.env.PORT ?? 3000, process.env.HOST ?? '127.0.0.1');
+  await app.listen(envVars.PORT, envVars.HOST);
 
-  Logger.log(`Servidor ejecutándose en: http://${process.env.HOST}:${process.env.PORT}`)
+  Logger.log(`Servidor ejecutándose en: http://${envVars.HOST}:${envVars.PORT}`);
 }
 
 bootstrap();
