@@ -1,3 +1,29 @@
-GET http://localhost:3000/products HTTP/1.1
+@host = http://localhost:8081
+
+GET {{host}}/products HTTP/1.1
 ###
 
+GET {{host}}/products/2 HTTP/1.1
+###
+
+POST {{host}}/products HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "Gaseosa Fanta",
+    "price": 3.10
+}
+###
+
+PATCH {{host}}/products/2 HTTP/1.1
+Content-Type: application/json
+
+{
+    "id": 2,
+    "name": "Galleta Soda",
+    "price": 1.50
+}
+###
+
+DELETE {{host}}/products/1 HTTP/1.1
+###

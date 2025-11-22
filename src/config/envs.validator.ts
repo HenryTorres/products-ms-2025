@@ -6,13 +6,15 @@ interface IEnvironmentVars {
     HOST: string;
     PORT: number;
     API_KEY: string;
+    DATABASE_URL: string;
 }
 
 // 2. Definimos el esquema de validación para las variables de entorno
 const envsSchema = joi.object<IEnvironmentVars>({
     HOST: joi.string().required(),
     PORT: joi.number().required(),
-    API_KEY: joi.string().required()
+    API_KEY: joi.string().required(),
+    DATABASE_URL: joi.string().required(),
 }).unknown(true)
 
 // Validamos las variables de entorno
@@ -29,5 +31,6 @@ const environmentVars: IEnvironmentVars = value;
 export const envVars = {
     HOST: environmentVars.HOST,
     PORT: environmentVars.PORT,
-    API_KEY: environmentVars.API_KEY
+    API_KEY: environmentVars.API_KEY,
+    DATABASE_URL: environmentVars.DATABASE_URL,
 }
