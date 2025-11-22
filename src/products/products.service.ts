@@ -1,23 +1,25 @@
-import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
-import { products_db } from 'src/data/db.data';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ProductCreateDTO } from './dtos/product.create.dto';
 import { ProductUpdateDTO } from './dtos/product.update.dto';
-import { PrismaClient } from 'generated/prisma';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
-export class ProductsService extends PrismaClient implements OnModuleInit {
+export class ProductsService {
 
-    async onModuleInit() {
-        await this.$connect();
-        console.log('Database connected');
+    constructor(private readonly prisma: PrismaService) { };
+
+    create(productCreateDTO: ProductCreateDTO) {
+        return this.prisma.product.create({
+            data: productCreateDTO
+        });
     }
 
     findAll() {
-        return products_db;
+        return this.prisma.product.findMany();
     }
 
     findOne(id: number) {
-        const product = products_db.find(item => item.id == id);
+        const product = this.prisma.product.findUnique({ where: { id } });
 
         if (!product) {
             throw new NotFoundException(`Producto con ID ${id} no encontrado`);
@@ -26,35 +28,23 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
         return product;
     }
 
-    create(productCreateDTO: ProductCreateDTO) {
-        return this.product.create({
-            data: productCreateDTO
+    async update(id: number, productUpdateDTO: ProductUpdateDTO) {
+
+        await this.findOne(id);
+
+        const product = await this.prisma.product.update({
+            where: { id },
+            data: productUpdateDTO
         });
+
+        return product;
     }
 
-    update(id: number, productUpdateDTO: ProductUpdateDTO) {
+    async delete(id: number) {
+        await this.findOne(id);
 
-        const index = products_db.findIndex(item => item.id == id);
-
-        if (index === -1)
-            throw new NotFoundException('Producto no encontrado');
-
-        const producto = { ...products_db[index], ...productUpdateDTO };
-
-        products_db[index] = producto;
-
-        return producto;
-    }
-
-    delete(id: number) {
-        const index = products_db.findIndex(item => item.id == id);
-
-        if (index === -1)
-            throw new NotFoundException('Producto no encontrado');
-
-        products_db.splice(index, 1);
-
-        return { message: 'Producto eliminado correctamente' }
+        const product = await this.prisma.product.delete({ where: { id } });
+        return product
     }
 
 }

@@ -1,4 +1,4 @@
-@host = http://localhost:8081
+@host = http://localhost:8085
 
 GET {{host}}/products HTTP/1.1
 ###
@@ -10,8 +10,8 @@ POST {{host}}/products HTTP/1.1
 Content-Type: application/json
 
 {
-    "name": "Gaseosa Fanta",
-    "price": 3.10
+    "name": "Arroz Faraon",
+    "price": 6.00
 }
 ###
 
@@ -25,5 +25,5 @@ Content-Type: application/json
 }
 ###
 
-DELETE {{host}}/products/1 HTTP/1.1
+DELETE {{host}}/products/2 HTTP/1.1
 ###
