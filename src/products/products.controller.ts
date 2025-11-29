@@ -1,4 +1,6 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
+import { MessagePattern, Payload } from '@nestjs/microservices';
+import { Controller, ParseIntPipe } from '@nestjs/common';
+
 import { ProductsService } from './products.service';
 import { ProductCreateDTO } from './dtos/product.create.dto';
 import { ProductUpdateDTO } from './dtos/product.update.dto';
@@ -8,32 +10,28 @@ export class ProductsController {
 
     constructor(private readonly service: ProductsService) { }
 
-    @Get()
+    @MessagePattern({ cmd: 'products.findall' })
     findAll() {
         return this.service.findAll();
     }
 
-    @Get(':id')
-    findOne(@Param('id', ParseIntPipe) id: number) {
-        const product = this.service.findOne(id);
-        return product;
+    @MessagePattern({ cmd: 'products.findone' })
+    findOne(@Payload('id', ParseIntPipe) id: number) {
+        return this.service.findOne(id);
     }
 
-    @Post()
-    create(@Body() productCreateDTO: ProductCreateDTO) {
+    @MessagePattern({ cmd: 'products.create' })
+    create(@Payload() productCreateDTO: ProductCreateDTO) {
         return this.service.create(productCreateDTO);
     }
 
-    @Patch(':id')
-    update(
-        @Param('id', ParseIntPipe) id: number,
-        @Body() productUpdateDTO: ProductUpdateDTO) {
-
-        return this.service.update(id, productUpdateDTO)
+    @MessagePattern({ cmd: 'products.update' })
+    update(@Payload() productUpdateDTO: ProductUpdateDTO) {
+        return this.service.update(+productUpdateDTO.id, productUpdateDTO)
     }
 
-    @Delete(':id')
-    delete(@Param('id', ParseIntPipe) id: number) {
+    @MessagePattern({ cmd: 'products.delete' })
+    delete(@Payload('id', ParseIntPipe) id: number) {
         return this.service.delete(id);
     }
 }
